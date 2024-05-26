@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using lab_4.Strategy;
+using lab_5.State;
 
 namespace lab_5.LightHTML;
 
@@ -25,12 +26,14 @@ class LightElementNode : LightNode
     private DisplayType displayType;
     private ClosingType closingType;
     private List<string> cssClasses;
-    private List<LightNode> children;
+    public List<LightNode> children;
     public EventSubscription EventSubscriptions { get; set; }
+    public override IState State { get; set; }
 
     public LightElementNode(string tagName, DisplayType displayType, ClosingType closingType,
         List<string> cssClasses = null,
-        EventSubscription eventSubscriptions = null)
+        EventSubscription eventSubscriptions = null,
+        IState state = null)
     {
         this.tagName = tagName;
         this.displayType = displayType;
@@ -39,11 +42,13 @@ class LightElementNode : LightNode
 
         this.children = new List<LightNode>();
         EventSubscriptions = eventSubscriptions ?? new EventSubscription();
+        State = state == null ? OpenState.GetInstance() : state;
     }
 
     public void AddChild(LightNode child)
     {
-        children.Add(child);
+        if (State != null)
+            State.AddChild(child, this);
     }
 
     public void ClearChilds()
@@ -55,6 +60,7 @@ class LightElementNode : LightNode
     {
         EventSubscriptions.Subscribe(eventName, handler);
     }
+
     public void RemoveSubscription(string eventName, string handler)
     {
         EventSubscriptions.Unsubscribe(eventName, handler);
@@ -81,6 +87,7 @@ class LightElementNode : LightNode
                         script.Append(eventListener);
                     }
                 }
+
                 script.Append("</script>");
                 idAttribute = $" id=\"{plainId}\" ";
             }
@@ -88,7 +95,7 @@ class LightElementNode : LightNode
             string cssClassesString = cssClasses.Count != 0 ? $" class=\"{string.Join(" ", cssClasses)}\"" : "";
             string startTag = $"<{tagName}{idAttribute}{cssClassesString}>";
             string endTag = closingType == ClosingType.Single ? "/" : $"</{tagName}>";
-            string innerHTML = string.Join("", children.Select(child => child.OuterHTML));
+            string innerHTML = string.Join("", children?.Select(child => child.OuterHTML));
 
 
             return startTag + innerHTML + endTag + script;
