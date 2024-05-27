@@ -19,8 +19,6 @@ class LightTextNode : LightNode
             return text;
         }
     }
-
-    public override string OuterHTML => text;
     public override string InnerHTML => text;
     public override LightNode Accept(ILightNodeVisitor visitor)
     {

@@ -28,7 +28,7 @@ class LightElementNode : LightNode
     private DisplayType displayType;
     private ClosingType closingType;
     private List<string> cssClasses;
-    private List<LightNode> children;
+    public List<LightNode> children;
     private string cssStyles;
 
     public EventSubscription EventSubscriptions { get; set; }

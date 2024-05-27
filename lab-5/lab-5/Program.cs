@@ -12,10 +12,15 @@ class Program
 {
     static void Main(string[] args)
     {
+        Console.WriteLine("********** Iterator demo **********");
         IteratorDemo.Demo();
+        Console.WriteLine("********** Command demo **********");
         CommandDemo.Demo();
+        Console.WriteLine("********** State demo **********");
         StateDemo.Demo();
+        Console.WriteLine("********** TemplateMethod demo **********");
         TemplateMethodDemo.Demo();
+        Console.WriteLine("********** Visitor demo **********");
         VisitorDemo.Demo();
     }
 }
