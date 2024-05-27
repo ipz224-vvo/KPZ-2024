@@ -1,3 +1,5 @@
+using lab_4.Strategy;
+using lab_5.Visitor;
 using lab_5.TemplateMethod;
 using lab_5.LightHTML;
 using lab_5.State;
@@ -14,5 +16,6 @@ class Program
         CommandDemo.Demo();
         StateDemo.Demo();
         TemplateMethodDemo.Demo();
+        VisitorDemo.Demo();
     }
 }

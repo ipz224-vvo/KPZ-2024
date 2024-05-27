@@ -1,5 +1,6 @@
 using System.Text;
 using lab_4.Strategy;
+using lab_5.Visitor;
 using lab_5.State;
 using lab_5.Iterator;
 
@@ -21,19 +22,22 @@ public delegate void EventHandler(object sender, EventArgs e);
 
 class LightElementNode : LightNode
 {
-    private Guid id = Guid.NewGuid();
+    private Guid id => Guid.NewGuid();
     private string plainId => id.ToString();
     private string tagName;
     private DisplayType displayType;
     private ClosingType closingType;
     private List<string> cssClasses;
-    public List<LightNode> children;
+    private List<LightNode> children;
+    private string cssStyles;
+
     public EventSubscription EventSubscriptions { get; set; }
     public override IState State { get; set; }
 
     public LightElementNode(string tagName, DisplayType displayType, ClosingType closingType,
         List<string> cssClasses = null,
         EventSubscription eventSubscriptions = null,
+        string cssStyles = null,
         IState state = null)
     {
         
@@ -44,10 +48,11 @@ class LightElementNode : LightNode
 
         this.children = new List<LightNode>();
         EventSubscriptions = eventSubscriptions ?? new EventSubscription();
-        OnCreated();
+        this.cssStyles = cssStyles;
         State = state == null ? OpenState.GetInstance() : state;
+        OnCreated();
     }
-
+    
     public void AddChild(LightNode child)
     {
         if (State != null)
@@ -111,7 +116,8 @@ class LightElementNode : LightNode
 
             string cssClassesString = cssClasses.Count != 0 ? $" class=\"{string.Join(" ", cssClasses)}\"" : "";
             OnClassListApplied();
-            string startTag = $"<{tagName}{idAttribute}{cssClassesString}>";
+            string cssStylesString = cssStyles != null ? $" style=\"{cssStyles}\" " : "";
+            string startTag = $"<{tagName}{idAttribute}{cssClassesString}{cssStylesString}>";
             string endTag = closingType == ClosingType.Single ? "/" : $"</{tagName}>\n";
             string innerHTML = string.Join("", children.Select(child => child.OuterHTML));
 
@@ -125,6 +131,12 @@ class LightElementNode : LightNode
     {
         get { return string.Join("", children.Select(child => child.OuterHTML)); }
     }
+
+    public override LightElementNode Accept(ILightNodeVisitor visitor)
+    {
+        return visitor.Visit(this);
+    }
+
     
     protected override void OnCreated()
     {
