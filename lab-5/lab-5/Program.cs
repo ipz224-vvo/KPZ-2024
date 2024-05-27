@@ -6,6 +6,11 @@ class Program
 {
     static void Main(string[] args)
     {
+        TemplateMethodDemo();
+    }
+
+    static void TemplateMethodDemo()
+    {
         LightElementNode html = new("html", DisplayType.Block, ClosingType.Double);
         LightElementNode head = new("head", DisplayType.Block, ClosingType.Double);
         LightElementNode title = new("title", DisplayType.Block, ClosingType.Double);
@@ -13,18 +18,18 @@ class Program
         title.AddChild(titleText);
         head.AddChild(title);
         html.AddChild(head);
-        
+
         LightElementNode body = new("body", DisplayType.Block, ClosingType.Double);
         LightElementNode div = new("div", DisplayType.Block, ClosingType.Double);
         LightTextNode divText = new("TEST");
         div.AddChild(divText);
         string divScript = "()=>alert(\'Test alert\')";
         div.AddSubscription("click", divScript);
-        
+
         LightElementNode div2 = new("div", DisplayType.Block, ClosingType.Double);
         LightTextNode divText2 = new("TEST2");
         div2.AddChild(divText2);
-        
+
         LightElementNode div3 = new("div", DisplayType.Block, ClosingType.Double);
         LightTextNode divText3 = new("TEST3");
         div3.AddChild(divText3);
@@ -32,7 +37,7 @@ class Program
         LightElementNode div4 = new("div", DisplayType.Block, ClosingType.Double);
         LightTextNode divText4 = new("TEST4");
         div4.AddChild(divText4);
-        
+
 
         LightElementNode divMain1 = new("div", DisplayType.Block, ClosingType.Double);
         divMain1.AddChild(div);
@@ -41,7 +46,7 @@ class Program
         LightElementNode divMain2 = new("div", DisplayType.Block, ClosingType.Double);
         divMain2.AddChild(div3);
         divMain2.AddChild(div4);
-        
+
         body.AddChild(divMain1);
         body.AddChild(divMain2);
         html.AddChild(body);
