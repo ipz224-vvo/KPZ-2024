@@ -8,6 +8,13 @@ class Program
 {
     static void Main(string[] args)
     {
+        VisitorDemo();
+        
+        
+        
+    }
+    static void VisitorDemo()
+    {
         LightNodeFormatter nodeFormatter = new();
         
         LightElementNode html = new("html", DisplayType.Block, ClosingType.Double);
@@ -43,5 +50,5 @@ class Program
         html.AddChild(body);
         Console.WriteLine(html.OuterHTML);
         File.WriteAllText("visitor.html", html.OuterHTML);
-    }
+    } 
 }
