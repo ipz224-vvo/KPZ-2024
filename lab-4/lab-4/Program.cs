@@ -14,7 +14,7 @@ class Program
         Console.InputEncoding = Encoding.Unicode;
         Console.OutputEncoding = Encoding.Unicode;
 
-        /*#region Chain of Responsibility
+        #region Chain of Responsibility
 
         Console.WriteLine("***** Chain of Responsibility *****");
 
@@ -38,10 +38,9 @@ class Program
 
         Console.WriteLine("***** End of Chain of Responsibility *****");
 
-        #endregion*/
+        #endregion
 
-        /*#region Mediator
-
+        #region Mediator
         Console.WriteLine("***** Mediator *****");
 
         var runway1 = new Runway();
@@ -77,8 +76,6 @@ class Program
         LightTextNode divText = new("TEST");
         div.AddChild(divText);
         string divScript = "()=>alert(\'Test alert\')";
-        //EventSubscription divSubscription = new();
-        //divSubscription.Subscribe("click", divScript);
         div.AddSubscription("click", divScript);
         body.AddChild(div);
         html.AddChild(body);
@@ -121,7 +118,7 @@ class Program
         
         
         Console.WriteLine("***** End of strategy *****");
-        #endregion*/
+        #endregion
         
         #region Memento
 
