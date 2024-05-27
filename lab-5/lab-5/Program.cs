@@ -1,6 +1,7 @@
+using lab_5.LightHTML;
+using lab_5.State;
 using lab_5.Command;
 using lab_5.Iterator;
-using lab_5.LightHTML;
 
 namespace lab_5;
 
@@ -10,5 +11,6 @@ class Program
     {
         IteratorDemo.Demo();
         CommandDemo.Demo();
+        StateDemo.Demo();
     }
 }

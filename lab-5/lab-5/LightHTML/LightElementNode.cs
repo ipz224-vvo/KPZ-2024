@@ -1,5 +1,6 @@
-﻿using System.Text;
+using System.Text;
 using lab_4.Strategy;
+using lab_5.State;
 using lab_5.Iterator;
 
 namespace lab_5.LightHTML;
@@ -26,12 +27,14 @@ class LightElementNode : LightNode
     private DisplayType displayType;
     private ClosingType closingType;
     private List<string> cssClasses;
-    private List<LightNode> children;
+    public List<LightNode> children;
     public EventSubscription EventSubscriptions { get; set; }
+    public override IState State { get; set; }
 
     public LightElementNode(string tagName, DisplayType displayType, ClosingType closingType,
         List<string> cssClasses = null,
-        EventSubscription eventSubscriptions = null)
+        EventSubscription eventSubscriptions = null,
+        IState state = null)
     {
         this.tagName = tagName;
         this.displayType = displayType;
@@ -40,11 +43,13 @@ class LightElementNode : LightNode
 
         this.children = new List<LightNode>();
         EventSubscriptions = eventSubscriptions ?? new EventSubscription();
+        State = state == null ? OpenState.GetInstance() : state;
     }
 
     public void AddChild(LightNode child)
     {
-        children.Add(child);
+        if (State != null)
+            State.AddChild(child, this);
     }
 
     public void ClearChilds()
@@ -105,7 +110,6 @@ class LightElementNode : LightNode
             string startTag = $"<{tagName}{idAttribute}{cssClassesString}>";
             string endTag = closingType == ClosingType.Single ? "/" : $"</{tagName}>\n";
             string innerHTML = string.Join("", children.Select(child => child.OuterHTML));
-
 
             return startTag + innerHTML + endTag + script;
         }
