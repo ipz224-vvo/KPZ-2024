@@ -1,3 +1,4 @@
+using lab_5.TemplateMethod;
 using lab_5.LightHTML;
 using lab_5.State;
 using lab_5.Command;
@@ -12,5 +13,6 @@ class Program
         IteratorDemo.Demo();
         CommandDemo.Demo();
         StateDemo.Demo();
+        TemplateMethodDemo.Demo();
     }
 }

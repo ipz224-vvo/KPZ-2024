@@ -36,6 +36,7 @@ class LightElementNode : LightNode
         EventSubscription eventSubscriptions = null,
         IState state = null)
     {
+        
         this.tagName = tagName;
         this.displayType = displayType;
         this.closingType = closingType;
@@ -43,6 +44,7 @@ class LightElementNode : LightNode
 
         this.children = new List<LightNode>();
         EventSubscriptions = eventSubscriptions ?? new EventSubscription();
+        OnCreated();
         State = state == null ? OpenState.GetInstance() : state;
     }
 
@@ -101,15 +103,19 @@ class LightElementNode : LightNode
                         script.Append(eventListener);
                     }
                 }
-
                 script.Append("</script>\n");
+                OnScriptAdded();
+
                 idAttribute = $" id=\"{plainId}\" ";
             }
 
             string cssClassesString = cssClasses.Count != 0 ? $" class=\"{string.Join(" ", cssClasses)}\"" : "";
+            OnClassListApplied();
             string startTag = $"<{tagName}{idAttribute}{cssClassesString}>";
             string endTag = closingType == ClosingType.Single ? "/" : $"</{tagName}>\n";
             string innerHTML = string.Join("", children.Select(child => child.OuterHTML));
+
+            OnInserted();
 
             return startTag + innerHTML + endTag + script;
         }
@@ -118,5 +124,46 @@ class LightElementNode : LightNode
     public override string InnerHTML
     {
         get { return string.Join("", children.Select(child => child.OuterHTML)); }
+    }
+    
+    protected override void OnCreated()
+    {
+        Console.WriteLine($"Element {tagName} created.");
+    }
+
+    protected override void OnInserted()
+    {
+        Console.WriteLine($"Element {tagName} inserted.");
+    }
+
+    protected override void OnClassListApplied()
+    {
+        if (cssClasses != null && cssClasses.Count != 0)
+        {
+            Console.WriteLine($"Class list applied to {tagName}: {string.Join(", ", cssClasses)}");
+            return;
+        }
+        Console.WriteLine($"No classes have been applied to {tagName}");
+    }
+
+    protected override void OnScriptAdded()
+    {
+        var eventHandlers = EventSubscriptions.GetEventHandlers();
+        if (eventHandlers == null || eventHandlers.Count == 0)
+        {
+            Console.WriteLine($"No classes have been added to {tagName}");
+            return;
+        }
+        
+        Console.WriteLine($"Scripts applied to {tagName}:\n");
+        foreach (var keyValuePair in eventHandlers)
+        {
+            string eventName = keyValuePair.Key;
+            var handlers = keyValuePair.Value;
+            foreach (var handler in handlers)
+            {
+                Console.WriteLine($"document.getElementById(\'{plainId}\').addEventListener(\'{eventName}\', {handler})\n");
+            }
+        }
     }
 }
