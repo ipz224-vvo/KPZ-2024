@@ -12,6 +12,7 @@ class LightImageNode : LightNode
 
     public LightImageNode(string src, string alt, ImageLoader imageLoader, string cssStyles = null)
     {
+        OnCreated();
         this.src = src;
         this.alt = alt;
         this.imageLoader = imageLoader;
@@ -37,9 +38,12 @@ class LightImageNode : LightNode
     {
         get { return ""; }
     }
-
     public override LightNode Accept(ILightNodeVisitor visitor)
     {
         return visitor.Visit(this);
+    }
+    protected override void OnCreated()
+    {
+        Console.WriteLine("LightImageNode created.");
     }
 }

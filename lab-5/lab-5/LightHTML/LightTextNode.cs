@@ -5,15 +5,19 @@ namespace lab_5.LightHTML;
 class LightTextNode : LightNode
 {
     private string text;
-
     public LightTextNode(string text)
     {
         this.text = text;
+        OnCreated();
     }
 
-    public void SetNode(LightTextNode textNode)
+    public override string OuterHTML
     {
-        text = textNode.InnerHTML;
+        get
+        {
+            OnTextRendered();
+            return text;
+        }
     }
 
     public override string OuterHTML => text;
@@ -21,5 +25,15 @@ class LightTextNode : LightNode
     public override LightNode Accept(ILightNodeVisitor visitor)
     {
         return visitor.Visit(this);
+    }
+    
+    protected override void OnCreated()
+    {
+        Console.WriteLine("LightTextNode created.");
+    }
+
+    protected override void OnTextRendered()
+    {
+        Console.WriteLine("Text rendered: " + text);
     }
 }
