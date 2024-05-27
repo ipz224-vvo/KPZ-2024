@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using lab_4.Strategy;
+using lab_5.Iterator;
 
 namespace lab_5.LightHTML;
 
@@ -51,10 +52,24 @@ class LightElementNode : LightNode
         children.Clear();
     }
 
+    public List<LightNode> GetChilds()
+    {
+        return children;
+    }
+
+    public IIterator<LightNode> CreateInDepthIterator()
+    {
+        return new InDepthIterator(this);
+    }
+    public IIterator<LightNode> CreateInWidthIterator()
+    {
+        return new InWidthIterator(this);
+    }
     public void AddSubscription(string eventName, string handler)
     {
         EventSubscriptions.Subscribe(eventName, handler);
     }
+
     public void RemoveSubscription(string eventName, string handler)
     {
         EventSubscriptions.Unsubscribe(eventName, handler);
@@ -69,7 +84,7 @@ class LightElementNode : LightNode
             var eventHandlers = EventSubscriptions.GetEventHandlers();
             if (eventHandlers != null && eventHandlers.Count != 0)
             {
-                script = new("\n<script>");
+                script = new("<script>\n");
                 foreach (var keyValuePair in eventHandlers)
                 {
                     string eventName = keyValuePair.Key;
@@ -81,13 +96,14 @@ class LightElementNode : LightNode
                         script.Append(eventListener);
                     }
                 }
-                script.Append("</script>");
+
+                script.Append("</script>\n");
                 idAttribute = $" id=\"{plainId}\" ";
             }
 
             string cssClassesString = cssClasses.Count != 0 ? $" class=\"{string.Join(" ", cssClasses)}\"" : "";
             string startTag = $"<{tagName}{idAttribute}{cssClassesString}>";
-            string endTag = closingType == ClosingType.Single ? "/" : $"</{tagName}>";
+            string endTag = closingType == ClosingType.Single ? "/" : $"</{tagName}>\n";
             string innerHTML = string.Join("", children.Select(child => child.OuterHTML));
 
 
