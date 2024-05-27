@@ -3,7 +3,6 @@
 class LightTextNode : LightNode
 {
     private string text;
-
     public LightTextNode(string text)
     {
         this.text = text;
