@@ -1,5 +1,7 @@
-﻿using System.Text;
+using System.Text;
 using lab_4.Strategy;
+using lab_5.State;
+using lab_5.Iterator;
 
 namespace lab_5.LightHTML;
 
@@ -25,12 +27,14 @@ class LightElementNode : LightNode
     private DisplayType displayType;
     private ClosingType closingType;
     private List<string> cssClasses;
-    private List<LightNode> children;
+    public List<LightNode> children;
     public EventSubscription EventSubscriptions { get; set; }
+    public override IState State { get; set; }
 
     public LightElementNode(string tagName, DisplayType displayType, ClosingType closingType,
         List<string> cssClasses = null,
-        EventSubscription eventSubscriptions = null)
+        EventSubscription eventSubscriptions = null,
+        IState state = null)
     {
         
         this.tagName = tagName;
@@ -41,11 +45,13 @@ class LightElementNode : LightNode
         this.children = new List<LightNode>();
         EventSubscriptions = eventSubscriptions ?? new EventSubscription();
         OnCreated();
+        State = state == null ? OpenState.GetInstance() : state;
     }
 
     public void AddChild(LightNode child)
     {
-        children.Add(child);
+        if (State != null)
+            State.AddChild(child, this);
     }
 
     public void ClearChilds()
@@ -53,10 +59,24 @@ class LightElementNode : LightNode
         children.Clear();
     }
 
+    public List<LightNode> GetChilds()
+    {
+        return children;
+    }
+
+    public IIterator<LightNode> CreateInDepthIterator()
+    {
+        return new InDepthIterator(this);
+    }
+    public IIterator<LightNode> CreateInWidthIterator()
+    {
+        return new InWidthIterator(this);
+    }
     public void AddSubscription(string eventName, string handler)
     {
         EventSubscriptions.Subscribe(eventName, handler);
     }
+
     public void RemoveSubscription(string eventName, string handler)
     {
         EventSubscriptions.Unsubscribe(eventName, handler);
@@ -71,7 +91,7 @@ class LightElementNode : LightNode
             var eventHandlers = EventSubscriptions.GetEventHandlers();
             if (eventHandlers != null && eventHandlers.Count != 0)
             {
-                script = new("\n<script>");
+                script = new("<script>\n");
                 foreach (var keyValuePair in eventHandlers)
                 {
                     string eventName = keyValuePair.Key;
@@ -83,18 +103,20 @@ class LightElementNode : LightNode
                         script.Append(eventListener);
                     }
                 }
-                script.Append("</script>");
+                script.Append("</script>\n");
                 OnScriptAdded();
+
                 idAttribute = $" id=\"{plainId}\" ";
             }
 
             string cssClassesString = cssClasses.Count != 0 ? $" class=\"{string.Join(" ", cssClasses)}\"" : "";
             OnClassListApplied();
             string startTag = $"<{tagName}{idAttribute}{cssClassesString}>";
-            string endTag = closingType == ClosingType.Single ? "/" : $"</{tagName}>";
+            string endTag = closingType == ClosingType.Single ? "/" : $"</{tagName}>\n";
             string innerHTML = string.Join("", children.Select(child => child.OuterHTML));
 
             OnInserted();
+
             return startTag + innerHTML + endTag + script;
         }
     }
