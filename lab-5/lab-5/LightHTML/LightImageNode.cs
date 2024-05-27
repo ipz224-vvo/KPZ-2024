@@ -10,6 +10,7 @@ class LightImageNode : LightNode
 
     public LightImageNode(string src,string alt, ImageLoader imageLoader)
     {
+        OnCreated();
         this.src = src;
         this.alt = alt;
         this.imageLoader = imageLoader;
@@ -28,4 +29,9 @@ class LightImageNode : LightNode
     {
         get { return ""; }
     }
+    protected override void OnCreated()
+    {
+        Console.WriteLine("LightImageNode created.");
+    }
+    
 }
